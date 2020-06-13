@@ -6,6 +6,6 @@ PageRank is an algorithm that will rank webpages by their importance represented
 ## Usage
 ```
 python pagerank.py [directory]
-- directory should contain webpages in terms of html files
 ```
+- directory should contain webpages in terms of html files
 
