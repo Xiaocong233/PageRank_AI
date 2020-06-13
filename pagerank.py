@@ -146,12 +146,20 @@ def iterate_pagerank(corpus, damping_factor):
 
     # store pages that link TO each pages
     for page in corpus:
+        # if no link, attach all links
+        if corpus[page] == set():
+            # count it links as all other pages
+            numLinks[page] = numPages
+
+            for eachPage in corpus:
+                # ignore repeats
+                if page not in link_to_page[eachPage]:
+                    link_to_page[eachPage].append(page)
+        
+        # attach only links that link to the webpage
         for page2 in corpus:
-            # ignore the same webpage
-            if page == page2:
-                continue
             for link in corpus[page]:
-                if link == page2:
+                if link == page2 and page not in link_to_page[page2]:
                     link_to_page[page2].append(page)
 
     # initilize delta to be a major value to ensure loop will run
