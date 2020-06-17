@@ -66,15 +66,16 @@ def transition_model(corpus, page, damping_factor):
     if corpus[page] == set():
         # set probability distribution of all the web pages to averaged random selection (out of all pages) probability
         for link in corpus:
-            pd[link] = (1-damping_factor)/numPages
+            pd[link] = 1 / numPages
+    # if there is link to other pages
     else:
         for link in corpus:
             # links to other page gets probability of random selection within the all other links with damping factor
             if link in corpus[page]:
-                pd[link] = damping_factor/numLinks + (1-damping_factor)/numPages
-            # if not link then gets probability of random selection within all webpages
+                pd[link] = damping_factor / numLinks + (1 - damping_factor) / numPages
+            # if link is not contained in this webpage then gets probability of random selection within all webpages
             else:
-                pd[link] = (1-damping_factor)/numPages
+                pd[link] = (1 - damping_factor) / numPages
 
     return pd
 
@@ -114,7 +115,7 @@ def sample_pagerank(corpus, damping_factor, n):
 
     # calculate for pagerank
     for page in corpus:
-        pageRank[page] = timeAppearance[page]/n
+        pageRank[page] = timeAppearance[page] / n
 
     return pageRank
 
