@@ -107,7 +107,7 @@ def sample_pagerank(corpus, damping_factor, n):
     for i in range(1, n+1):
         # return the next page based on the weighted random selection with the transition model of last sample
         next_sample = random.choices(list(corpus), 
-                      list(transition_model(corpus, last_sample, damping_factor).values())).pop()
+                      list(transition_model(corpus, last_sample, damping_factor).values()), k=1).pop()
         # update frequency
         timeAppearance[next_sample] += 1
         # remember the new sample and prepare to calculate for the next sample
@@ -156,28 +156,35 @@ def iterate_pagerank(corpus, damping_factor):
                 # ignore repeats
                 if page not in link_to_page[eachPage]:
                     link_to_page[eachPage].append(page)
-        
-        # attach only links that link to the webpage
-        for page2 in corpus:
-            for link in corpus[page]:
-                if link == page2 and page not in link_to_page[page2]:
-                    link_to_page[page2].append(page)
+        # else, attach only links that link to the webpage
+        else:
+            for page2 in corpus:
+                for link in corpus[page]:
+                    if link == page2 and page not in link_to_page[page2]:
+                        link_to_page[page2].append(page)
 
     # initilize delta to be a major value to ensure loop will run
     delta = 10000
     # run iterative algorithm until convergence
     while abs(delta) > 0.001:
         for page in corpus:
-            sum = 0
+            summation = 0
             for link in link_to_page[page]:
-                sum += pageRank[link] / numLinks[link]
-            pageRank[page] = (1-damping_factor)/numPages + damping_factor*sum
+                summation += pageRank[link] / numLinks[link]
+            pageRank[page] = (1-damping_factor)/numPages + damping_factor*summation
             delta = pageRank[page] - oldPageRank[page]
             oldPageRank[page] = pageRank[page]
     
-    # return page ranks
+    # scale each page rank such that they add up to 1
+    summation = 0
+    for page in pageRank:
+        summation += pageRank[page]
+    scale = 1 / summation
+    for page in pageRank:
+        pageRank[page] *= scale
+
+    # return final page ranks
     return pageRank
-        
 
 if __name__ == "__main__":
     main()
